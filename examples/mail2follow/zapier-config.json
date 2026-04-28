@@ -1,0 +1,119 @@
+{
+  "app_name": "Mail2Follow",
+  "app_id": "mail2follow",
+  "app_description": "Mail2Follow tracks emails you send from Gmail and reminds you to follow up when nobody replies. AI classifies email type and generates follow-up drafts.",
+  "base_url": "https://api.mail2follow.zinkforge.com",
+  "auth_type": "oauth2",
+  "auth_config": {
+    "authorize_url": "https://accounts.google.com/o/oauth2/v2/auth",
+    "token_url": "https://oauth2.googleapis.com/token",
+    "test_endpoint": "/api/auth/me",
+    "scopes": ["openid", "email"]
+  },
+  "triggers": [
+    {
+      "key": "new_followup",
+      "name": "New Followup Created",
+      "description": "Triggers when the user tracks a new email for follow-up",
+      "important_output_fields": [
+        { "key": "id", "label": "Followup ID", "type": "integer" },
+        { "key": "subject", "label": "Email Subject", "type": "string" },
+        { "key": "recipient_email", "label": "Recipient Email", "type": "string" },
+        { "key": "recipient_name", "label": "Recipient Name", "type": "string" },
+        { "key": "email_type", "label": "Email Type", "type": "string" },
+        { "key": "followup_date", "label": "Follow-up Date", "type": "datetime" },
+        { "key": "date_sent", "label": "Date Sent", "type": "datetime" },
+        { "key": "ai_confidence", "label": "AI Confidence", "type": "number" }
+      ],
+      "sensitive_fields_to_exclude": [
+        "body_preview",
+        "content_hash",
+        "open_tracking_token",
+        "signature_html",
+        "thread_id",
+        "message_id"
+      ]
+    },
+    {
+      "key": "followup_overdue",
+      "name": "Followup Overdue",
+      "description": "Triggers when a follow-up passes its due date without a reply",
+      "important_output_fields": [
+        { "key": "id", "label": "Followup ID", "type": "integer" },
+        { "key": "subject", "label": "Email Subject", "type": "string" },
+        { "key": "recipient_email", "label": "Recipient Email", "type": "string" },
+        { "key": "recipient_name", "label": "Recipient Name", "type": "string" },
+        { "key": "email_type", "label": "Email Type", "type": "string" },
+        { "key": "followup_date", "label": "Follow-up Date", "type": "datetime" },
+        { "key": "days_overdue", "label": "Days Overdue", "type": "integer" }
+      ],
+      "sensitive_fields_to_exclude": [
+        "body_preview",
+        "content_hash",
+        "open_tracking_token",
+        "ai_draft"
+      ]
+    },
+    {
+      "key": "reply_received",
+      "name": "Reply Received",
+      "description": "Triggers when the recipient replies to a tracked email",
+      "important_output_fields": [
+        { "key": "id", "label": "Followup ID", "type": "integer" },
+        { "key": "subject", "label": "Email Subject", "type": "string" },
+        { "key": "recipient_email", "label": "Recipient Email", "type": "string" },
+        { "key": "recipient_name", "label": "Recipient Name", "type": "string" },
+        { "key": "email_type", "label": "Email Type", "type": "string" },
+        { "key": "days_to_reply", "label": "Days to Reply", "type": "integer" },
+        { "key": "resolved_at", "label": "Resolved At", "type": "datetime" }
+      ],
+      "sensitive_fields_to_exclude": [
+        "body_preview",
+        "content_hash",
+        "open_tracking_token"
+      ]
+    },
+    {
+      "key": "followup_resolved",
+      "name": "Followup Resolved",
+      "description": "Triggers when a follow-up is resolved (by reply or manually)",
+      "important_output_fields": [
+        { "key": "id", "label": "Followup ID", "type": "integer" },
+        { "key": "subject", "label": "Email Subject", "type": "string" },
+        { "key": "recipient_email", "label": "Recipient Email", "type": "string" },
+        { "key": "email_type", "label": "Email Type", "type": "string" },
+        { "key": "resolved_reason", "label": "Resolved Reason", "type": "string" },
+        { "key": "resolved_at", "label": "Resolved At", "type": "datetime" },
+        { "key": "days_open", "label": "Days Open", "type": "integer" }
+      ],
+      "sensitive_fields_to_exclude": [
+        "body_preview",
+        "content_hash",
+        "open_tracking_token"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "key": "create_followup",
+      "name": "Create Followup",
+      "description": "Creates a new follow-up tracking entry from external data",
+      "input_fields": [
+        { "key": "subject", "label": "Email Subject", "type": "string", "required": true },
+        { "key": "recipient_email", "label": "Recipient Email", "type": "string", "required": true },
+        { "key": "recipient_name", "label": "Recipient Name", "type": "string", "required": false },
+        { "key": "email_type", "label": "Email Type", "type": "string", "required": false, "enum": ["pitch", "proposal", "invoice", "quote", "approval", "request", "reminder", "urgent", "introduction", "application", "general"] },
+        { "key": "followup_days", "label": "Follow-up in N Days", "type": "integer", "required": false }
+      ]
+    },
+    {
+      "key": "resolve_followup",
+      "name": "Resolve Followup",
+      "description": "Marks a follow-up as resolved",
+      "input_fields": [
+        { "key": "followup_id", "label": "Followup ID", "type": "integer", "required": true },
+        { "key": "reason", "label": "Resolved Reason", "type": "string", "required": false, "enum": ["replied", "manual", "no_longer_needed"] }
+      ]
+    }
+  ]
+}
