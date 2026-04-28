@@ -1,0 +1,23 @@
+{
+  "name": "zapier-connector-skill",
+  "version": "1.0.0",
+  "description": "Claude Code skill that generates production-ready Zapier integrations for any SaaS",
+  "bin": {
+    "zapier-connector-skill": "./scripts/install.mjs"
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "scripts/",
+    "references/",
+    "examples/"
+  ],
+  "keywords": ["claude-code", "skill", "zapier", "integration", "zinkforge"],
+  "author": "ZinkForge",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jrbayguade/zapier-connector-skill"
+  },
+  "type": "module"
+}
